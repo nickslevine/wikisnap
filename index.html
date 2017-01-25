@@ -1,0 +1,111 @@
+<head>
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-orange.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,500,300italic,500italic,700italic,900,300">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <style>
+        /*body{
+            background-color:#F3F3F3;
+        }*/
+        .searchw {
+            text-align: center;
+        }
+        .article{
+            text-align:justify;
+            border-style:solid;
+            border-width:10px;
+        }
+        .mdl-cell {
+            /*background-color:#F3F3F3;*/
+            padding: 80px;
+        }
+        .foot {
+            bottom: 30;
+            width: 100%;
+            position: absolute;
+        }
+        .random{
+            text-align: right;
+        }
+    </style>
+
+    <script>
+        function randomapicall() {
+             $.ajax({
+                headers: {'Api-User-Agent': 'WikiFinder/1.0'},
+                url: "https://en.wikipedia.org/w/api.php?action=query&generator=random&grnnamespace=0&format=json&callback=?&redirects=1&prop=extracts&exintro=&explaintext",
+                dataType: "json",
+                success: function(response){
+                    obkey = Object.keys(response.query.pages)[0];
+                    console.log(response);
+                    wtext = response.query.pages[obkey].extract;
+                    wtitle = response.query.pages[obkey].title;
+                    console.log(wtext);
+                    console.log(wtitle);
+                    $('#article').html('<div class="mdl-cell mdl-cell--6-col mdl-cell--3-offset article"><h1>'+wtitle+'</h1><br><p>'+wtext+'</p></div>');
+                }
+            });
+        }
+        function apicall() {
+            $.ajax({
+                headers: {'Api-User-Agent': 'WikiFinder/1.0'},
+                url: "https://en.wikipedia.org/w/api.php?action=query&format=json&callback=?&redirects=1&prop=extracts&exintro=&explaintext=&titles=" + searchterm,
+                dataType: "json",
+                success: function(response){
+                    obkey = Object.keys(response.query.pages)[0];
+                    console.log(response);
+                    wtext = response.query.pages[obkey].extract;
+                    wtitle = response.query.pages[obkey].title;
+                    console.log(wtext);
+                    console.log(wtitle);
+                    $('#article').html('<div class="mdl-cell mdl-cell--6-col mdl-cell--3-offset article"><h1>'+wtitle+'</h1><br><p>'+wtext+'</p></div>');
+                }
+            });
+        }
+        function wikisearch(){
+            console.log(document.getElementById('searchtext').value);
+            searchterm = document.getElementById('searchtext').value;
+            searchterm = encodeURIComponent(searchterm.trim());
+            console.log(searchterm);
+            apicall();
+        }
+        
+    </script>
+
+</head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header mdl-layout__header--scroll">
+            <div class="mdl-layout-icon"></div>
+            <div class="mdl-layout__header-row">
+                 <span class="mdl-layout__title">WikiSnap</span>
+            </div>
+        </header>
+    <main class="mdl-layout__content">
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--4-col mdl-cell--4-offset searchw">
+                <form action="#">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="text" id="searchtext" onkeydown = "if (event.keyCode == 13) {wikisearch(); $('#searchtext').val('')}">
+                        <label class="mdl-textfield__label" for="searchtext">Search Wikipedia</label>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="mdl-grid" id="article">
+
+        </div>
+        <div class="mdl-grid foot">
+            <div class="mdl-cell mdl-cell--11-col">
+                <div class="random" onclick="randomapicall()">
+                    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+                        <i class="material-icons">shuffle</i>
+                    </button>   
+                </div>
+            </div>
+        </div>
+  </main>
+  </div>
+</body>
